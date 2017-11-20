@@ -29,57 +29,109 @@ backlightCanvas.height = document.body.clientHeight;
 backlightCanvas.style['pointer-events'] = 'none';
 document.body.appendChild(backlightCanvas);
 
-// const ctx = backlightCanvas.getContext('2d');
-// ctx.fillStyle = 'black';
-// ctx.strokeStyle = 'red';
+const ctx = backlightCanvas.getContext('2d');
+ctx.fillStyle = 'black';
+ctx.strokeStyle = 'red';
 
-// function draw() {
+function draw() {
 
-//     ctx.clearRect(0, 0, backlightCanvas.width, backlightCanvas.height);
+    ctx.clearRect(0, 0, backlightCanvas.width, backlightCanvas.height);
 
-//     let pageBoundsMin = document.body.scrollTop;
-//     let pageBoundsMax = document.body.scrollTop + document.body.clientHeight;
+    let pageBoundsMin = document.body.scrollTop;
+    let pageBoundsMax = document.body.scrollTop + document.body.clientHeight;
 
-//     rects.forEach((r) => {
+    rects.forEach((r) => {
         
-//         if (r.y+r.height > pageBoundsMin && r.y < pageBoundsMax) {
-//             ctx.beginPath();
-//             ctx.rect(r.x, r.y-document.body.scrollTop, r.width, r.height);
-//             ctx.fill()    
-//             ctx.stroke();
-//         }
+        if (r.y+r.height > pageBoundsMin && r.y < pageBoundsMax) {
+            ctx.beginPath();
+            ctx.rect(r.x, r.y-document.body.scrollTop, r.width, r.height);
+            ctx.fill()    
+            ctx.stroke();
+        }
     
-//     });
+    });
         
-// }
+}
 
-// document.addEventListener('scroll', draw);
-// draw();
+document.addEventListener('scroll', draw);
+draw();
+
+
 
 console.log("Passing to shader");
 
+const overlayCanvas = document.createElement('canvas');
+overlayCanvas.style.position = 'fixed';
+overlayCanvas.style.top = '0';
+overlayCanvas.style.left = '0';
+overlayCanvas.width = document.body.clientWidth;
+overlayCanvas.height = document.body.clientHeight;
+overlayCanvas.style['pointer-events'] = 'none';
+document.body.appendChild(overlayCanvas);
 
-let gl = twgl.getWebGLContext(backlightCanvas);
+var vs = `
+attribute vec4 position;
+varying vec2 v_texcoord;
+uniform mat4 u_matrix;
+void main() {
+  gl_Position = u_matrix * position;
+  v_texcoord = position.xy * .5 + .5;
+}
+`;
 
-let programInfo = twgl.createProgramInfo(gl, ['vs','fs']);
+var fs = `
+precision mediump float;
+varying vec2 v_texcoord;
+uniform sampler2D u_tex;
+void main() {
+  gl_FragColor = texture2D(u_tex, v_texcoord);
+  gl_FragColor.rgb *= gl_FragColor.a;
+}
+`;
 
-let arrays = {
-    position: [-1, -1, 0, 1, -1, 0, -1, 1, 0, -1, 1, 0, 1, -1, 0, 1, 1, 0],
-};
+let gl = overlayCanvas.getContext("webgl", { premultipliedAlpha: false });
+let m4 = twgl.m4;
+let programInfo = twgl.createProgramInfo(gl, [vs, fs]);
+let bufferInfo = twgl.primitives.createXYQuadBufferInfo(gl);
 
-let bufferInfo = twgl.createBufferInfoFromArrays(gl, arrays);
+let tex = twgl.createTexture(gl, {
+    src: "https://i.imgur.com/iFom4eT.png",
+    crossOrigin: "",
+}, render);
 
-function render(time) {
+function render() {
     twgl.resizeCanvasToDisplaySize(gl.canvas);
-    gl.viewport(0, 0, gl.canvas.width, gl.canvas.height);
-    const uniforms = {
-      time: time * 0.001,
-      resolution: [gl.canvas.width, gl.canvas.height],
-    };
+
+    gl.enable(gl.BLEND);
+    gl.blendFunc(gl.ONE, gl.ONE_MINUS_SRC_ALPHA);
+    
     gl.useProgram(programInfo.program);
     twgl.setBuffersAndAttributes(gl, programInfo, bufferInfo);
-    twgl.setUniforms(programInfo, uniforms);
+    twgl.setUniforms(programInfo, {
+        u_tex: tex,
+        u_matrix: m4.identity(),
+    });
     twgl.drawBufferInfo(gl, bufferInfo);
-    requestAnimationFrame(render);
-  }
-requestAnimationFrame(render);
+
+    twgl.setUniforms(programInfo, {
+        u_tex: tex,
+        u_matrix: m4.scaling([0.5, 0.5, 1]),
+    });
+    twgl.drawBufferInfo(gl, bufferInfo);
+
+}
+
+// function render(time) {
+//     twgl.resizeCanvasToDisplaySize(gl.canvas);
+//     gl.viewport(0, 0, gl.canvas.width, gl.canvas.height);
+//     const uniforms = {
+//       time: time * 0.001,
+//       resolution: [gl.canvas.width, gl.canvas.height],
+//     };
+//     gl.useProgram(programInfo.program);
+//     twgl.setBuffersAndAttributes(gl, programInfo, bufferInfo);
+//     twgl.setUniforms(programInfo, uniforms);
+//     twgl.drawBufferInfo(gl, bufferInfo);
+//     requestAnimationFrame(render);
+//   }
+// requestAnimationFrame(render);
