@@ -108,7 +108,7 @@ uniform float weight;
 uniform vec2 lightPositionOnScreen;
 uniform sampler2D tex;
 varying vec2 v_texcoord;
-const int NUM_SAMPLES = 100;
+const int NUM_SAMPLES = 20;
 
 void main()
 {
@@ -139,6 +139,7 @@ let m4 = twgl.m4;
 let programInfo = twgl.createProgramInfo(gl, [vs, fs]);
 let bufferInfo = twgl.primitives.createXYQuadBufferInfo(gl);
 let c = 0;
+let mouse = [0.5,0.5];
 
 function render() {
 
@@ -152,13 +153,14 @@ function render() {
     gl.useProgram(programInfo.program);
     twgl.setBuffersAndAttributes(gl, programInfo, bufferInfo);
     twgl.setUniforms(programInfo, {
-        exposure: 1.0,
+        exposure: 5.0,
         decay: 1.0,
         density: 1.0,
         weight: 0.01,
-        lightPositionOnScreen: [0.5+(Math.sin(c)*0.4),0.5+(Math.cos(c)*0.3)],
-        // lightPositionOnScreen: [0.5,0.5],
-        u_resolution: [800,800],
+        // lightPositionOnScreen: [0.5+(Math.sin(c)*0.4),0.5+(Math.cos(c)*0.3)],
+        lightPositionOnScreen: [0.5,0.5],
+        // lightPositionOnScreen: mouse,
+        u_resolution: [400,400],
         u_time: u_time += 0.025,
         u_tex: tex,
         u_matrix: m4.identity(),
@@ -170,5 +172,8 @@ function render() {
 }
 
 document.addEventListener('scroll', draw);
+document.addEventListener('mousemove', (e)=>{
+    mouse = [(e.offsetX / overlayCanvas.width)*2-1, (e.offsetY / overlayCanvas.height)*2-1];
+});
 draw();
 render();
