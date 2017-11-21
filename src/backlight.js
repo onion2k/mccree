@@ -26,25 +26,25 @@ backlightCanvas.width = document.body.clientWidth;
 backlightCanvas.height = document.body.clientHeight;
 
 const ctx = backlightCanvas.getContext('2d');
-ctx.fillStyle = 'black';
+ctx.fillStyle = 'rgba(0,0,0,0)';
 ctx.strokeStyle = 'red';
 
 function draw() {
 
-    // ctx.clearRect(0, 0, backlightCanvas.width, backlightCanvas.height);
+    ctx.clearRect(0, 0, backlightCanvas.width, backlightCanvas.height);
 
-    ctx.fillStyle = 'grey';
+    ctx.fillStyle = 'rgba(0,0,0,0)';
     ctx.beginPath();
     ctx.rect(0, 0, backlightCanvas.width, backlightCanvas.height);
     ctx.fill();
 
-    ctx.fillStyle = 'white';
-    ctx.beginPath();
-    ctx.arc(document.body.clientWidth/2, document.body.clientHeight/2,50,0,2*Math.PI);
-    ctx.fill();
+    // ctx.fillStyle = 'rgba(255,255,255,0)';
+    // ctx.beginPath();
+    // ctx.arc(document.body.clientWidth/2, document.body.clientHeight/2,50,0,2*Math.PI);
+    // ctx.fill();
 
-    ctx.fillStyle = 'black';
-
+    ctx.fillStyle = 'rgba(255,255,255,1)';
+    
     let pageBoundsMin = document.body.scrollTop;
     let pageBoundsMax = document.body.scrollTop + document.body.clientHeight;
 
@@ -121,14 +121,13 @@ void main()
     {
         textCoo -= deltaTextCoord;
         vec4 sample = texture2D(tex, textCoo);
-    
         sample *= illuminationDecay * weight;
-
         gl_FragColor += sample;
-
         illuminationDecay *= decay;
     }
+
     gl_FragColor *= exposure;
+
 }
 `
 
@@ -139,13 +138,16 @@ gl.pixelStorei(gl.UNPACK_FLIP_Y_WEBGL, true);
 let m4 = twgl.m4;
 let programInfo = twgl.createProgramInfo(gl, [vs, fs]);
 let bufferInfo = twgl.primitives.createXYQuadBufferInfo(gl);
+let c = 0;
 
 function render() {
+
+    c += 0.01;
 
     twgl.resizeCanvasToDisplaySize(gl.canvas);
 
     gl.enable(gl.BLEND);
-    gl.blendFunc(gl.ONE, gl.ONE_MINUS_SRC_ALPHA);
+    gl.blendFunc(gl.SRC_COLOR, gl.ONE_MINUS_SRC_COLOR);
     
     gl.useProgram(programInfo.program);
     twgl.setBuffersAndAttributes(gl, programInfo, bufferInfo);
@@ -154,7 +156,8 @@ function render() {
         decay: 1.0,
         density: 1.0,
         weight: 0.01,
-        lightPositionOnScreen: [0.5,0.5],
+        lightPositionOnScreen: [0.5+(Math.sin(c)*0.4),0.5+(Math.cos(c)*0.3)],
+        // lightPositionOnScreen: [0.5,0.5],
         u_resolution: [800,800],
         u_time: u_time += 0.025,
         u_tex: tex,

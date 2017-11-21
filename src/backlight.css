@@ -17,6 +17,10 @@ div {
     color: #cccccc;
 }
 
+.red {
+    background-color: red;
+}
+
 .double {
     grid-column: span 2;
 }
