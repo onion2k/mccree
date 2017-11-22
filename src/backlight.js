@@ -28,7 +28,7 @@ backlightCanvas.style.position = 'fixed';
 backlightCanvas.style.top = '0';
 backlightCanvas.style.left = '0';
 backlightCanvas.style['background-blend-mode'] = 'multiply';
-// document.body.appendChild(backlightCanvas);
+document.body.appendChild(backlightCanvas);
 
 const ctx = backlightCanvas.getContext('2d');
 ctx.fillStyle = 'rgba(0,0,0,0)';
@@ -45,6 +45,7 @@ function draw() {
 
     ctx.fillStyle = 'rgba(255,255,255,1)';
     ctx.beginPath();
+    // ctx.arc(mouse[0]*document.body.clientWidth, (1-mouse[1])*document.body.clientHeight,50,0,2*Math.PI);
     ctx.arc(mouse[0]*document.body.clientWidth, (1-mouse[1])*document.body.clientHeight,50,0,2*Math.PI);
     ctx.fill();
 
@@ -78,9 +79,10 @@ overlayCanvas.style.top = '0';
 overlayCanvas.style.left = '0';
 overlayCanvas.width = document.body.clientWidth;
 overlayCanvas.height = document.body.clientHeight;
-overlayCanvas.style['background-blend-mode'] = 'multiply';
+// overlayCanvas.style['background-blend-mode'] = 'multiply';
+overlayCanvas.style['mix-blend-mode'] = 'multiply';
 // overlayCanvas.style['pointer-events'] = 'none';
-document.body.appendChild(overlayCanvas);
+// document.body.appendChild(overlayCanvas);
 
 var vs = `
 attribute vec4 position;
@@ -154,7 +156,7 @@ function render() {
     twgl.resizeCanvasToDisplaySize(gl.canvas);
 
     gl.enable(gl.BLEND);
-    gl.blendFunc(gl.ONE, gl.ONE_MINUS_SRC_COLOR);
+    gl.blendFunc(gl.SRC_COLOR, gl.ONE_MINUS_SRC_COLOR);
     // gl.blendFuncSeparate(gl.SRC_COLOR, gl.ONE_MINUS_SRC_ALPHA, gl.ONE, gl.ONE);
     
     gl.useProgram(programInfo.program);
@@ -178,7 +180,7 @@ function render() {
 
 document.addEventListener('scroll', draw);
 overlayCanvas.addEventListener('mousemove', (e)=>{
-    mouse = [(e.offsetX / overlayCanvas.width), 1-(e.offsetY / overlayCanvas.height)];
+    mouse =  [0.5,0.5]; // [(e.offsetX / overlayCanvas.width), 1-(e.offsetY / overlayCanvas.height)];
     draw();
 });
 draw();
