@@ -24,11 +24,11 @@ console.log("Converting to texture");
 const backlightCanvas = document.createElement('canvas');
 backlightCanvas.width = document.body.clientWidth;
 backlightCanvas.height = document.body.clientHeight;
-backlightCanvas.style.position = 'fixed';
-backlightCanvas.style.top = '0';
-backlightCanvas.style.left = '0';
-backlightCanvas.style['background-blend-mode'] = 'multiply';
-document.body.appendChild(backlightCanvas);
+// backlightCanvas.style.position = 'fixed';
+// backlightCanvas.style.top = '0';
+// backlightCanvas.style.left = '0';
+// backlightCanvas.style['mix-blend-mode'] = 'multiply';
+// document.body.appendChild(backlightCanvas);
 
 const ctx = backlightCanvas.getContext('2d');
 ctx.fillStyle = 'rgba(0,0,0,0)';
@@ -38,7 +38,7 @@ function draw() {
 
     ctx.clearRect(0, 0, backlightCanvas.width, backlightCanvas.height);
 
-    ctx.fillStyle = 'rgba(0,0,0,1)';
+    ctx.fillStyle = 'rgba(128,128,128,1)';
     ctx.beginPath();
     ctx.rect(0, 0, backlightCanvas.width, backlightCanvas.height);
     ctx.fill();
@@ -80,9 +80,9 @@ overlayCanvas.style.left = '0';
 overlayCanvas.width = document.body.clientWidth;
 overlayCanvas.height = document.body.clientHeight;
 // overlayCanvas.style['background-blend-mode'] = 'multiply';
-overlayCanvas.style['mix-blend-mode'] = 'multiply';
+// overlayCanvas.style['mix-blend-mode'] = 'multiply';
 // overlayCanvas.style['pointer-events'] = 'none';
-// document.body.appendChild(overlayCanvas);
+document.body.appendChild(overlayCanvas);
 
 var vs = `
 attribute vec4 position;
@@ -106,7 +106,6 @@ void main() {
 
 
 var fs = `
-
 precision mediump float;
 
 uniform float exposure;
@@ -141,7 +140,7 @@ void main()
 
 
 let u_time = 0;
-let gl = overlayCanvas.getContext("webgl", { premultipliedAlpha: true });
+let gl = overlayCanvas.getContext("webgl", { alpha: true, premultipliedAlpha: false });
 gl.pixelStorei(gl.UNPACK_FLIP_Y_WEBGL, true);
 let m4 = twgl.m4;
 let programInfo = twgl.createProgramInfo(gl, [vs, fs]);
@@ -154,12 +153,13 @@ function render() {
     c += 0.01;
 
     twgl.resizeCanvasToDisplaySize(gl.canvas);
-
-    gl.enable(gl.BLEND);
-    gl.blendFunc(gl.SRC_COLOR, gl.ONE_MINUS_SRC_COLOR);
-    // gl.blendFuncSeparate(gl.SRC_COLOR, gl.ONE_MINUS_SRC_ALPHA, gl.ONE, gl.ONE);
     
+    gl.clearColor(0, 0, 0, 0);
+    gl.clear(gl.COLOR_BUFFER_BIT | gl.DEPTH_BUFFER_BIT);
+    gl.enable(gl.BLEND);
+    gl.blendFunc(gl.SRC_ALPHA, gl.ONE_MINUS_SRC_ALPHA);
     gl.useProgram(programInfo.program);
+    
     twgl.setBuffersAndAttributes(gl, programInfo, bufferInfo);
     twgl.setUniforms(programInfo, {
         exposure: 1.0,
@@ -179,9 +179,8 @@ function render() {
 }
 
 document.addEventListener('scroll', draw);
-overlayCanvas.addEventListener('mousemove', (e)=>{
-    mouse =  [0.5,0.5]; // [(e.offsetX / overlayCanvas.width), 1-(e.offsetY / overlayCanvas.height)];
-    draw();
-});
+// overlayCanvas.addEventListener('mousemove', (e)=>{
+//     mouse =  [0.5,0.5]; // [(e.offsetX / overlayCanvas.width), 1-(e.offsetY / overlayCanvas.height)];
+// });
 draw();
 render();
