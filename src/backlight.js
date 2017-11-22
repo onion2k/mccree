@@ -134,6 +134,7 @@ void main()
     }
 
     gl_FragColor *= exposure;
+    gl_FragColor.a = gl_FragColor.r;
 
 }
 `
@@ -156,9 +157,9 @@ function render() {
     
     gl.clearColor(0, 0, 0, 0);
     gl.clear(gl.COLOR_BUFFER_BIT | gl.DEPTH_BUFFER_BIT);
-    gl.enable(gl.BLEND);
-    gl.blendEquation( gl.FUNC_ADD );
-    gl.blendFunc(gl.SRC_ALPHA, gl.ONE_MINUS_SRC_ALPHA);
+    // gl.enable(gl.BLEND);
+    // gl.blendEquation( gl.FUNC_ADD );
+    // gl.blendFunc(gl.SRC_ALPHA, gl.DST_COLOR);
     gl.useProgram(programInfo.program);
     
     twgl.setBuffersAndAttributes(gl, programInfo, bufferInfo);
@@ -180,8 +181,9 @@ function render() {
 }
 
 document.addEventListener('scroll', draw);
-// overlayCanvas.addEventListener('mousemove', (e)=>{
-//     mouse =  [0.5,0.5]; // [(e.offsetX / overlayCanvas.width), 1-(e.offsetY / overlayCanvas.height)];
-// });
+overlayCanvas.addEventListener('mousemove', (e)=>{
+    mouse =  [(e.offsetX / overlayCanvas.width), 1-(e.offsetY / overlayCanvas.height)];
+    draw();
+});
 draw();
 render();
