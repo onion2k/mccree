@@ -24,6 +24,11 @@ console.log("Converting to texture");
 const backlightCanvas = document.createElement('canvas');
 backlightCanvas.width = document.body.clientWidth;
 backlightCanvas.height = document.body.clientHeight;
+backlightCanvas.style.position = 'fixed';
+backlightCanvas.style.top = '0';
+backlightCanvas.style.left = '0';
+backlightCanvas.style['background-blend-mode'] = 'multiply';
+// document.body.appendChild(backlightCanvas);
 
 const ctx = backlightCanvas.getContext('2d');
 ctx.fillStyle = 'rgba(0,0,0,0)';
@@ -33,17 +38,17 @@ function draw() {
 
     ctx.clearRect(0, 0, backlightCanvas.width, backlightCanvas.height);
 
-    ctx.fillStyle = 'rgba(0,0,0,0)';
+    ctx.fillStyle = 'rgba(0,0,0,1)';
     ctx.beginPath();
     ctx.rect(0, 0, backlightCanvas.width, backlightCanvas.height);
     ctx.fill();
 
-    ctx.fillStyle = 'rgba(255,255,255,0)';
+    ctx.fillStyle = 'rgba(255,255,255,1)';
     ctx.beginPath();
-    ctx.arc(mouse[0]*document.body.clientWidth, mouse[1]*document.body.clientHeight,50,0,2*Math.PI);
+    ctx.arc(mouse[0]*document.body.clientWidth, (1-mouse[1])*document.body.clientHeight,50,0,2*Math.PI);
     ctx.fill();
 
-    ctx.fillStyle = 'rgba(255,255,255,1)';
+    ctx.fillStyle = 'rgba(0,0,0,1)';
     
     let pageBoundsMin = document.body.scrollTop;
     let pageBoundsMax = document.body.scrollTop + document.body.clientHeight;
@@ -73,7 +78,8 @@ overlayCanvas.style.top = '0';
 overlayCanvas.style.left = '0';
 overlayCanvas.width = document.body.clientWidth;
 overlayCanvas.height = document.body.clientHeight;
-overlayCanvas.style['pointer-events'] = 'none';
+overlayCanvas.style['background-blend-mode'] = 'multiply';
+// overlayCanvas.style['pointer-events'] = 'none';
 document.body.appendChild(overlayCanvas);
 
 var vs = `
@@ -108,7 +114,7 @@ uniform float weight;
 uniform vec2 lightPositionOnScreen;
 uniform sampler2D tex;
 varying vec2 v_texcoord;
-const int NUM_SAMPLES = 20;
+const int NUM_SAMPLES = 100;
 
 void main()
 {
@@ -133,7 +139,7 @@ void main()
 
 
 let u_time = 0;
-let gl = overlayCanvas.getContext("webgl", { premultipliedAlpha: false });
+let gl = overlayCanvas.getContext("webgl", { premultipliedAlpha: true });
 gl.pixelStorei(gl.UNPACK_FLIP_Y_WEBGL, true);
 let m4 = twgl.m4;
 let programInfo = twgl.createProgramInfo(gl, [vs, fs]);
@@ -148,18 +154,16 @@ function render() {
     twgl.resizeCanvasToDisplaySize(gl.canvas);
 
     gl.enable(gl.BLEND);
-    // gl.blendFunc(gl.SRC_COLOR, gl.ONE_MINUS_SRC_COLOR);
-    gl.blendFunc(gl.ONE, gl.ONE_MINUS_SRC_ALPHA);
+    gl.blendFunc(gl.ONE, gl.ONE_MINUS_SRC_COLOR);
+    // gl.blendFuncSeparate(gl.SRC_COLOR, gl.ONE_MINUS_SRC_ALPHA, gl.ONE, gl.ONE);
     
     gl.useProgram(programInfo.program);
     twgl.setBuffersAndAttributes(gl, programInfo, bufferInfo);
     twgl.setUniforms(programInfo, {
-        exposure: 5.0,
+        exposure: 1.0,
         decay: 1.0,
         density: 1.0,
         weight: 0.01,
-        // lightPositionOnScreen: [0.5+(Math.sin(c)*0.4),0.5+(Math.cos(c)*0.3)],
-        // lightPositionOnScreen: [0.5,0.5],
         lightPositionOnScreen: mouse,
         u_resolution: [400,400],
         u_time: u_time += 0.025,
@@ -173,8 +177,9 @@ function render() {
 }
 
 document.addEventListener('scroll', draw);
-document.addEventListener('mousemove', (e)=>{
-    mouse = [(e.offsetX / overlayCanvas.width), (e.offsetY / overlayCanvas.height)];
+overlayCanvas.addEventListener('mousemove', (e)=>{
+    mouse = [(e.offsetX / overlayCanvas.width), 1-(e.offsetY / overlayCanvas.height)];
+    draw();
 });
 draw();
 render();
