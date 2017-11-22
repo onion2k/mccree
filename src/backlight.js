@@ -38,7 +38,7 @@ function draw() {
 
     ctx.clearRect(0, 0, backlightCanvas.width, backlightCanvas.height);
 
-    ctx.fillStyle = 'rgba(128,128,128,1)';
+    ctx.fillStyle = 'rgba(0,0,0,1)';
     ctx.beginPath();
     ctx.rect(0, 0, backlightCanvas.width, backlightCanvas.height);
     ctx.fill();
@@ -157,7 +157,8 @@ function render() {
     gl.clearColor(0, 0, 0, 0);
     gl.clear(gl.COLOR_BUFFER_BIT | gl.DEPTH_BUFFER_BIT);
     gl.enable(gl.BLEND);
-    gl.blendFunc(gl.SRC_ALPHA, gl.ONE_MINUS_SRC_ALPHA);
+    gl.blendEquation( gl.FUNC_ADD );
+    gl.blendFunc(gl.SRC_ALPHA, gl.ONE);
     gl.useProgram(programInfo.program);
     
     twgl.setBuffersAndAttributes(gl, programInfo, bufferInfo);
