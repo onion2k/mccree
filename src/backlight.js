@@ -38,10 +38,10 @@ function draw() {
     ctx.rect(0, 0, backlightCanvas.width, backlightCanvas.height);
     ctx.fill();
 
-    // ctx.fillStyle = 'rgba(255,255,255,0)';
-    // ctx.beginPath();
-    // ctx.arc(document.body.clientWidth/2, document.body.clientHeight/2,50,0,2*Math.PI);
-    // ctx.fill();
+    ctx.fillStyle = 'rgba(255,255,255,0)';
+    ctx.beginPath();
+    ctx.arc(mouse[0]*document.body.clientWidth, mouse[1]*document.body.clientHeight,50,0,2*Math.PI);
+    ctx.fill();
 
     ctx.fillStyle = 'rgba(255,255,255,1)';
     
@@ -148,7 +148,8 @@ function render() {
     twgl.resizeCanvasToDisplaySize(gl.canvas);
 
     gl.enable(gl.BLEND);
-    gl.blendFunc(gl.SRC_COLOR, gl.ONE_MINUS_SRC_COLOR);
+    // gl.blendFunc(gl.SRC_COLOR, gl.ONE_MINUS_SRC_COLOR);
+    gl.blendFunc(gl.ONE, gl.ONE_MINUS_SRC_ALPHA);
     
     gl.useProgram(programInfo.program);
     twgl.setBuffersAndAttributes(gl, programInfo, bufferInfo);
@@ -158,8 +159,8 @@ function render() {
         density: 1.0,
         weight: 0.01,
         // lightPositionOnScreen: [0.5+(Math.sin(c)*0.4),0.5+(Math.cos(c)*0.3)],
-        lightPositionOnScreen: [0.5,0.5],
-        // lightPositionOnScreen: mouse,
+        // lightPositionOnScreen: [0.5,0.5],
+        lightPositionOnScreen: mouse,
         u_resolution: [400,400],
         u_time: u_time += 0.025,
         u_tex: tex,
@@ -173,7 +174,7 @@ function render() {
 
 document.addEventListener('scroll', draw);
 document.addEventListener('mousemove', (e)=>{
-    mouse = [(e.offsetX / overlayCanvas.width)*2-1, (e.offsetY / overlayCanvas.height)*2-1];
+    mouse = [(e.offsetX / overlayCanvas.width), (e.offsetY / overlayCanvas.height)];
 });
 draw();
 render();
