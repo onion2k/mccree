@@ -7,18 +7,19 @@ body {
     display: grid;
     grid-template-columns: repeat(4, 1fr);
     grid-gap: 25px;
-    background-color: #cccccc;
+    background-color: #dddddd;
 }
 
 div {
     padding: 10px;
     min-height: 150px;
-    background-color: #eeeeee;
+    background-color: #888888;
     color: #cccccc;
+    border: 1px solid #000000;
 }
 
 .red {
-    background-color: red;
+    background-color: #ff0000;
 }
 
 .double {

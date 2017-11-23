@@ -4,7 +4,7 @@ import * as twgl from '../node_modules/twgl.js/dist/4.x/twgl-full.js';
 console.log("Mapping screen elements");
 
 const rects = [];
-const els = document.querySelectorAll('.backlight');
+const els = document.querySelectorAll('div');
 let tex;
 
 els.forEach((el) => {
@@ -24,17 +24,17 @@ console.log("Converting to texture");
 const backlightCanvas = document.createElement('canvas');
 backlightCanvas.width = document.body.clientWidth;
 backlightCanvas.height = document.body.clientHeight;
-// backlightCanvas.style.position = 'fixed';
-// backlightCanvas.style.top = '0';
-// backlightCanvas.style.left = '0';
-// backlightCanvas.style['mix-blend-mode'] = 'multiply';
-// document.body.appendChild(backlightCanvas);
 
 const ctx = backlightCanvas.getContext('2d');
 ctx.fillStyle = 'rgba(0,0,0,0)';
 ctx.strokeStyle = 'red';
 
 function draw() {
+
+    let pageBoundsMin = document.body.scrollTop;
+    let pageBoundsMax = document.body.scrollTop + document.body.clientHeight;
+
+    mouse[1] = (document.body.scrollTop / (document.body.offsetHeight-document.body.clientHeight));
 
     ctx.clearRect(0, 0, backlightCanvas.width, backlightCanvas.height);
 
@@ -45,14 +45,10 @@ function draw() {
 
     ctx.fillStyle = 'rgba(255,255,255,1)';
     ctx.beginPath();
-    // ctx.arc(mouse[0]*document.body.clientWidth, (1-mouse[1])*document.body.clientHeight,50,0,2*Math.PI);
-    ctx.arc(mouse[0]*document.body.clientWidth, (1-mouse[1])*document.body.clientHeight,50,0,2*Math.PI);
+    ctx.arc(document.body.clientWidth/2, (mouse[1])*document.body.clientHeight,50,0,2*Math.PI);
     ctx.fill();
 
     ctx.fillStyle = 'rgba(0,0,0,1)';
-    
-    let pageBoundsMin = document.body.scrollTop;
-    let pageBoundsMax = document.body.scrollTop + document.body.clientHeight;
 
     rects.forEach((r) => {
 
@@ -79,9 +75,7 @@ overlayCanvas.style.top = '0';
 overlayCanvas.style.left = '0';
 overlayCanvas.width = document.body.clientWidth;
 overlayCanvas.height = document.body.clientHeight;
-// overlayCanvas.style['background-blend-mode'] = 'multiply';
-// overlayCanvas.style['mix-blend-mode'] = 'multiply';
-// overlayCanvas.style['pointer-events'] = 'none';
+overlayCanvas.style['pointer-events'] = 'none';
 document.body.appendChild(overlayCanvas);
 
 var vs = `
@@ -93,17 +87,6 @@ void main() {
     v_texcoord = position.xy * .5 + .5;
 }
 `;
-
-// var fs = `
-// precision mediump float;
-// varying vec2 v_texcoord;
-// uniform sampler2D u_tex;
-// void main() {
-//     gl_FragColor = texture2D(u_tex, v_texcoord);
-//     gl_FragColor.rgb *= gl_FragColor.a;
-// }
-// `;
-
 
 var fs = `
 precision mediump float;
@@ -154,12 +137,7 @@ function render() {
     c += 0.01;
 
     twgl.resizeCanvasToDisplaySize(gl.canvas);
-    
-    gl.clearColor(0, 0, 0, 0);
-    gl.clear(gl.COLOR_BUFFER_BIT | gl.DEPTH_BUFFER_BIT);
-    // gl.enable(gl.BLEND);
-    // gl.blendEquation( gl.FUNC_ADD );
-    // gl.blendFunc(gl.SRC_ALPHA, gl.DST_COLOR);
+
     gl.useProgram(programInfo.program);
     
     twgl.setBuffersAndAttributes(gl, programInfo, bufferInfo);
@@ -168,7 +146,7 @@ function render() {
         decay: 1.0,
         density: 1.0,
         weight: 0.01,
-        lightPositionOnScreen: mouse,
+        lightPositionOnScreen: [mouse[0], 1-mouse[1]],
         u_resolution: [400,400],
         u_time: u_time += 0.025,
         u_tex: tex,
@@ -181,9 +159,5 @@ function render() {
 }
 
 document.addEventListener('scroll', draw);
-overlayCanvas.addEventListener('mousemove', (e)=>{
-    mouse =  [(e.offsetX / overlayCanvas.width), 1-(e.offsetY / overlayCanvas.height)];
-    draw();
-});
 draw();
 render();
