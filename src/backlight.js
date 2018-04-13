@@ -43,7 +43,7 @@ function draw() {
     ctx.rect(0, 0, backlightCanvas.width, backlightCanvas.height);
     ctx.fill();
 
-    ctx.fillStyle = 'rgba(0,0,0,1)';
+    ctx.fillStyle = 'rgba(255,255,255,1)';
     ctx.beginPath();
     ctx.arc(document.body.clientWidth/2, (mouse[1])*document.body.clientHeight,50,0,2*Math.PI);
     ctx.fill();
