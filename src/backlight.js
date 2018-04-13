@@ -26,7 +26,7 @@ backlightCanvas.width = document.body.clientWidth;
 backlightCanvas.height = document.body.clientHeight;
 
 const ctx = backlightCanvas.getContext('2d');
-ctx.fillStyle = 'rgba(0,0,0,0)';
+ctx.fillStyle = 'rgba(255,255,255,0)';
 ctx.strokeStyle = 'red';
 
 function draw() {
@@ -38,7 +38,7 @@ function draw() {
 
     ctx.clearRect(0, 0, backlightCanvas.width, backlightCanvas.height);
 
-    ctx.fillStyle = 'rgba(0,0,0,1)';
+    ctx.fillStyle = 'rgba(255,255,255,1)';
     ctx.beginPath();
     ctx.rect(0, 0, backlightCanvas.width, backlightCanvas.height);
     ctx.fill();
@@ -48,7 +48,7 @@ function draw() {
     ctx.arc(document.body.clientWidth/2, (mouse[1])*document.body.clientHeight,50,0,2*Math.PI);
     ctx.fill();
 
-    ctx.fillStyle = 'rgba(0,0,0,1)';
+    ctx.fillStyle = 'rgba(255,255,255,1)';
 
     rects.forEach((r) => {
 
