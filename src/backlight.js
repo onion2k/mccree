@@ -24,6 +24,10 @@ console.log("Converting to texture");
 const backlightCanvas = document.createElement('canvas');
 backlightCanvas.width = document.body.clientWidth;
 backlightCanvas.height = document.body.clientHeight;
+// backlightCanvas.style.position = 'fixed';
+// backlightCanvas.style.top = '0';
+// backlightCanvas.style.left = '0';
+// document.body.appendChild(backlightCanvas);
 
 const ctx = backlightCanvas.getContext('2d');
 ctx.fillStyle = 'rgba(0,0,0,0)';
@@ -38,26 +42,26 @@ function draw() {
 
     ctx.clearRect(0, 0, backlightCanvas.width, backlightCanvas.height);
 
+    //background
     ctx.fillStyle = 'rgba(0,0,0,0)';
     ctx.beginPath();
     ctx.rect(0, 0, backlightCanvas.width, backlightCanvas.height);
     ctx.fill();
 
+    // light
     ctx.fillStyle = 'rgba(255,255,255,1)';
     ctx.beginPath();
     ctx.arc(document.body.clientWidth/2, (mouse[1])*document.body.clientHeight,50,0,2*Math.PI);
     ctx.fill();
 
-    ctx.fillStyle = 'rgba(0,0,0,1)';
-
+    //boxes
+    ctx.fillStyle = 'rgba(128,128,128,1)';
     rects.forEach((r) => {
-
         if (r.y+r.height > pageBoundsMin && r.y < pageBoundsMax) {
             ctx.beginPath();
             ctx.rect(r.x, r.y-document.body.scrollTop, r.width, r.height);
             ctx.fill();
         }
-    
     });
 
     tex = twgl.createTexture(gl, {
@@ -104,7 +108,7 @@ void main()
 {
     vec2 deltaTextCoord = vec2( v_texcoord.st - lightPositionOnScreen.xy );
     vec2 textCoo = v_texcoord.st;
-    deltaTextCoord *= 1.0 /  float(NUM_SAMPLES) * density;
+    deltaTextCoord *= 1.0 / float(NUM_SAMPLES) * density;
     float illuminationDecay = 1.0;
 
     for(int i=0; i < NUM_SAMPLES ; i++)
@@ -146,7 +150,7 @@ function render() {
         density: 1.0,
         weight: 0.01,
         lightPositionOnScreen: [mouse[0], 1-mouse[1]],
-        u_resolution: [800,800],
+        u_resolution: [400,400],
         u_time: u_time += 0.025,
         u_tex: tex,
         u_matrix: m4.identity(),
