@@ -38,7 +38,7 @@ function draw() {
 
     ctx.clearRect(0, 0, backlightCanvas.width, backlightCanvas.height);
 
-    ctx.fillStyle = 'rgba(0,0,0,1)';
+    ctx.fillStyle = 'rgba(0,0,0,0)';
     ctx.beginPath();
     ctx.rect(0, 0, backlightCanvas.width, backlightCanvas.height);
     ctx.fill();
@@ -122,7 +122,6 @@ void main()
 }
 `
 
-
 let u_time = 0;
 let gl = overlayCanvas.getContext("webgl", { alpha: true, premultipliedAlpha: false });
 gl.pixelStorei(gl.UNPACK_FLIP_Y_WEBGL, true);
@@ -142,12 +141,12 @@ function render() {
     
     twgl.setBuffersAndAttributes(gl, programInfo, bufferInfo);
     twgl.setUniforms(programInfo, {
-        exposure: 1.0,
+        exposure: 1.05,
         decay: 1.0,
         density: 1.0,
         weight: 0.01,
         lightPositionOnScreen: [mouse[0], 1-mouse[1]],
-        u_resolution: [400,400],
+        u_resolution: [800,800],
         u_time: u_time += 0.025,
         u_tex: tex,
         u_matrix: m4.identity(),
