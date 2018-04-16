@@ -24,10 +24,10 @@ console.log("Converting to texture");
 const backlightCanvas = document.createElement('canvas');
 backlightCanvas.width = document.body.clientWidth;
 backlightCanvas.height = document.body.clientHeight;
-backlightCanvas.style.position = 'fixed';
-backlightCanvas.style.top = '0';
-backlightCanvas.style.left = '0';
-document.body.appendChild(backlightCanvas);
+// backlightCanvas.style.position = 'fixed';
+// backlightCanvas.style.top = '0';
+// backlightCanvas.style.left = '0';
+// document.body.appendChild(backlightCanvas);
 
 const ctx = backlightCanvas.getContext('2d');
 ctx.fillStyle = 'rgba(0,0,0,0)';
@@ -55,7 +55,7 @@ function draw() {
     ctx.fill();
 
     //boxes
-    ctx.fillStyle = 'rgba(128,128,128,1)';
+    ctx.fillStyle = 'rgba(64,64,64,1)';
     rects.forEach((r) => {
         if (r.y+r.height > pageBoundsMin && r.y < pageBoundsMax) {
             ctx.beginPath();
@@ -81,6 +81,7 @@ overlayCanvas.style.left = '0';
 overlayCanvas.width = document.body.clientWidth;
 overlayCanvas.height = document.body.clientHeight;
 overlayCanvas.style['pointer-events'] = 'none';
+overlayCanvas.style['mix-blend-mode'] = 'normal';
 document.body.appendChild(overlayCanvas);
 
 var vs = `
@@ -103,7 +104,7 @@ uniform float weight;
 uniform vec2 lightPositionOnScreen;
 uniform sampler2D tex;
 varying vec2 v_texcoord;
-const int NUM_SAMPLES = 50;
+const int NUM_SAMPLES = 60;
 
 void main()
 {
