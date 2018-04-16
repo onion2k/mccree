@@ -1,24 +1,38 @@
+@font-face {
+  font-family: system;
+  font-style: normal;
+  font-weight: 300;
+  src: local(".SFNSText-Light"), local(".HelveticaNeueDeskInterface-Light"), local(".LucidaGrandeUI"), local("Ubuntu Light"), local("Segoe UI Light"), local("Roboto-Light"), local("DroidSans"), local("Tahoma");
+}
+
 body {
-    padding: 25px;
-    margin: 0;
-    display: grid;
-    grid-template-columns: repeat(4, 1fr);
-    grid-gap: 25px;
-    background-color: #dddddd;
+  font-family: "system";
+  padding: 25px;
+  margin: 0;
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  grid-gap: 25px;
+  background-color: #dddddd;
 }
 
 div {
-    padding: 10px;
-    min-height: 150px;
-    background-color: #888888;
-    color: #cccccc;
-    border: 1px solid #000000;
+  padding: 10px;
+  min-height: 150px;
+  background-color: #888888;
+  color: #cccccc;
+  border: 1px solid #000000;
 }
 
 .red {
-    background-color: #ff0000;
+  background-color: #ff0000;
 }
 
 .double {
-    grid-column: span 2;
+  grid-column: span 2;
+}
+
+.about > p {
+  margin: 0;
+  padding: 0;
+  margin-bottom: 15px;
 }
