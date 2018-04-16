@@ -24,10 +24,10 @@ console.log("Converting to texture");
 const backlightCanvas = document.createElement('canvas');
 backlightCanvas.width = document.body.clientWidth;
 backlightCanvas.height = document.body.clientHeight;
-// backlightCanvas.style.position = 'fixed';
-// backlightCanvas.style.top = '0';
-// backlightCanvas.style.left = '0';
-// document.body.appendChild(backlightCanvas);
+backlightCanvas.style.position = 'fixed';
+backlightCanvas.style.top = '0';
+backlightCanvas.style.left = '0';
+document.body.appendChild(backlightCanvas);
 
 const ctx = backlightCanvas.getContext('2d');
 ctx.fillStyle = 'rgba(0,0,0,0)';
@@ -63,6 +63,7 @@ function draw() {
             ctx.fill();
         }
     });
+
 
     tex = twgl.createTexture(gl, {
         src: ctx.canvas,
@@ -150,7 +151,7 @@ function render() {
         density: 1.05,
         weight: 0.019,
         lightPositionOnScreen: [mouse[0], 1-mouse[1]],
-        u_resolution: [1200,1200],
+        u_resolution: [500,500],
         u_time: u_time += 0.025,
         u_tex: tex,
         u_matrix: m4.identity(),
