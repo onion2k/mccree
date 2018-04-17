@@ -1,5 +1,3 @@
-# Backlight
+# McCree
 
-An attempt to get 'god rays' shining through a webpage.
-
-Currently broken as the rays should be white...
+Backlight with a mouse-controlled stencil for shooting at a webpage. :)
