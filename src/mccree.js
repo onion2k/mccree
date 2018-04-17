@@ -1,5 +1,6 @@
 import './mccree.css';
 import * as twgl from '../node_modules/twgl.js/dist/4.x/twgl-full.js';
+import howler from 'howler';
 
 console.log("Mapping screen elements");
 
@@ -7,7 +8,6 @@ const rects = [];
 const els = document.querySelectorAll('div');
 let tex;
 let holes = [];
-let shooting = false;
 
 els.forEach((el) => {
 
@@ -22,6 +22,13 @@ els.forEach((el) => {
 });
 
 console.log("Converting to texture");
+
+const shot = new Howl({
+  src: ['shot.ogg'],
+  sprite: {
+    shot: [200,3000]
+  }
+})
 
 const backlightCanvas = document.createElement('canvas');
 backlightCanvas.width = document.body.clientWidth;
@@ -128,7 +135,7 @@ let mouse = [0.5,0.5];
 
 function render() {
 
-    c += 0.01;
+    c += 0.001;
 
     twgl.resizeCanvasToDisplaySize(gl.canvas);
 
@@ -160,35 +167,6 @@ document.body.addEventListener('mousedown', (e)=>{
   holes.push(
     [e.clientX, e.clientY]
   );
-  draw();
-  shooting = true;
-});
-
-document.body.addEventListener('mouseup', (e)=>{
-  shooting = false;
+  shot.play('shot');
   draw();
 });
-
-function bang(e){
-  if (shooting) {
-    holes.push(
-      [e.clientX, e.clientY]
-    );
-    draw();
-  }
-}
-
-function throttled(delay, fn) {
-  let lastCall = 0;
-  return function (...args) {
-    const now = (new Date).getTime();
-    if (now - lastCall < delay) {
-      return;
-    }
-    lastCall = now;
-    return fn(...args);
-  }
-}
-
-const tHandler = throttled(40, bang);
-document.body.addEventListener('mousemove', tHandler);
