@@ -157,6 +157,10 @@ draw();
 render();
 
 document.body.addEventListener('mousedown', (e)=>{
+  holes.push(
+    [e.clientX, e.clientY]
+  );
+  draw();
   shooting = true;
 });
 
