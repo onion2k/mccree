@@ -100,7 +100,7 @@ uniform float weight;
 uniform vec2 lightPositionOnScreen;
 uniform sampler2D tex;
 varying vec2 v_texcoord;
-const int NUM_SAMPLES = 100;
+const int NUM_SAMPLES = 150;
 
 void main()
 {
@@ -135,7 +135,7 @@ let mouse = [0.5,0.5];
 
 function render() {
 
-    c += 0.001;
+    c += 0.005;
 
     twgl.resizeCanvasToDisplaySize(gl.canvas);
 
@@ -143,10 +143,10 @@ function render() {
     
     twgl.setBuffersAndAttributes(gl, programInfo, bufferInfo);
     twgl.setUniforms(programInfo, {
-        exposure: 1.05,
-        decay: 1.0,
-        density: 1.0,
-        weight: 0.1,
+        exposure: 1.25,
+        decay: 0.9,
+        density: 0.5,
+        weight: 0.15,
         lightPositionOnScreen: [0.5 + Math.sin(c) / Math.PI, 0.5 + Math.cos(c) / Math.PI],
         u_resolution: [800,800],
         u_time: u_time += 0.025,
