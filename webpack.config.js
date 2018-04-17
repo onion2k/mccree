@@ -8,12 +8,12 @@ const ExtractTextPlugin = require("extract-text-webpack-plugin");
 
 const config = {
     entry: {
-        app: ["./src/backlight.js"]
+        app: ["./src/mccree.js"]
     },
     output: {
         path: path.resolve(__dirname, "build"),
         publicPath: "/",
-        filename: "backlight.js",
+        filename: "mccree.js",
         crossOriginLoading: "anonymous"
     },
     devServer: {
@@ -46,7 +46,7 @@ const config = {
         ]),
         new UglifyJSPlugin(),
         new HtmlWebpackPlugin({ template: 'assets/index.html' }),
-        new ExtractTextPlugin("backlight.css"),
+        new ExtractTextPlugin("mccree.css"),
     ]
 };
 

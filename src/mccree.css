@@ -12,23 +12,15 @@ body {
   display: grid;
   grid-template-columns: repeat(4, 1fr);
   grid-gap: 25px;
-  background-color: #fff;
+  background-color: #000;
 }
 
 div {
   padding: 10px;
   min-height: 150px;
-  background-color: #888888;
+  background-color: #222222;
   color: #cccccc;
-  border: 1px solid #000000;
-}
-
-.red {
-  background-color: #ff0000;
-}
-
-.double {
-  grid-column: span 2;
+  border: 1px solid #111111;
 }
 
 .about > p {

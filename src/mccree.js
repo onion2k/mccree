@@ -1,4 +1,4 @@
-import './backlight.css';
+import './mccree.css';
 import * as twgl from '../node_modules/twgl.js/dist/4.x/twgl-full.js';
 
 console.log("Mapping screen elements");
@@ -6,6 +6,8 @@ console.log("Mapping screen elements");
 const rects = [];
 const els = document.querySelectorAll('div');
 let tex;
+let holes = [];
+let shooting = false;
 
 els.forEach((el) => {
 
@@ -24,10 +26,6 @@ console.log("Converting to texture");
 const backlightCanvas = document.createElement('canvas');
 backlightCanvas.width = document.body.clientWidth;
 backlightCanvas.height = document.body.clientHeight;
-// backlightCanvas.style.position = 'fixed';
-// backlightCanvas.style.top = '0';
-// backlightCanvas.style.left = '0';
-// document.body.appendChild(backlightCanvas);
 
 const ctx = backlightCanvas.getContext('2d');
 ctx.fillStyle = 'rgba(0,0,0,0)';
@@ -43,25 +41,16 @@ function draw() {
     ctx.clearRect(0, 0, backlightCanvas.width, backlightCanvas.height);
 
     //background
-    ctx.fillStyle = 'rgba(0,0,0,0)';
+    ctx.fillStyle = 'rgba(255,255,255,0)';
     ctx.beginPath();
     ctx.rect(0, 0, backlightCanvas.width, backlightCanvas.height);
     ctx.fill();
 
-    // light
     ctx.fillStyle = 'rgba(255,255,255,1)';
-    ctx.beginPath();
-    ctx.arc(document.body.clientWidth/2, (mouse[1])*document.body.clientHeight,50,0,2*Math.PI);
-    ctx.fill();
-
-    //boxes
-    ctx.fillStyle = 'rgba(64,64,64,1)';
-    rects.forEach((r) => {
-        if (r.y+r.height > pageBoundsMin && r.y < pageBoundsMax) {
-            ctx.beginPath();
-            ctx.rect(r.x, r.y-document.body.scrollTop, r.width, r.height);
-            ctx.fill();
-        }
+    holes.forEach((hole) => {
+      ctx.beginPath();
+      ctx.arc(hole[0], hole[1], 10, 0, 2*Math.PI);
+      ctx.fill();
     });
 
 
@@ -104,7 +93,7 @@ uniform float weight;
 uniform vec2 lightPositionOnScreen;
 uniform sampler2D tex;
 varying vec2 v_texcoord;
-const int NUM_SAMPLES = 60;
+const int NUM_SAMPLES = 100;
 
 void main()
 {
@@ -147,12 +136,12 @@ function render() {
     
     twgl.setBuffersAndAttributes(gl, programInfo, bufferInfo);
     twgl.setUniforms(programInfo, {
-        exposure: 1.0,
+        exposure: 1.05,
         decay: 1.0,
-        density: 1.05,
-        weight: 0.019,
-        lightPositionOnScreen: [mouse[0], 1-mouse[1]],
-        u_resolution: [500,500],
+        density: 1.0,
+        weight: 0.1,
+        lightPositionOnScreen: [0.5,0.75],
+        u_resolution: [1600,1600],
         u_time: u_time += 0.025,
         u_tex: tex,
         u_matrix: m4.identity(),
@@ -166,3 +155,36 @@ function render() {
 document.addEventListener('scroll', draw);
 draw();
 render();
+
+document.body.addEventListener('mousedown', (e)=>{
+  shooting = true;
+});
+
+document.body.addEventListener('mouseup', (e)=>{
+  shooting = false;
+  draw();
+});
+
+function bang(e){
+  if (shooting) {
+    holes.push(
+      [e.clientX, e.clientY]
+    );
+    draw();
+  }
+}
+
+function throttled(delay, fn) {
+  let lastCall = 0;
+  return function (...args) {
+    const now = (new Date).getTime();
+    if (now - lastCall < delay) {
+      return;
+    }
+    lastCall = now;
+    return fn(...args);
+  }
+}
+
+const tHandler = throttled(40, bang);
+document.body.addEventListener('mousemove', tHandler);
