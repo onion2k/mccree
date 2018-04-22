@@ -8,3 +8,4 @@ Backlight with a mouse-controlled stencil for shooting at a webpage. :)
 * Better lighting - radial blur?
 * Debris
 * Blood?
+* Element detection
